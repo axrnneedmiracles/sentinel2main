@@ -1,8 +1,8 @@
 export const firebaseConfig = {
-  "projectId": "sentinel-scan-20-5570384-fc357",
-  "appId": "1:58754126077:web:56b90cc3ceae4126666e94",
-  "apiKey": "AIzaSyBYixkvbC6_R0PBULHWX6UGg9Mg4MEsIng",
-  "authDomain": "sentinel-scan-20-5570384-fc357.firebaseapp.com",
-  "measurementId": "",
-  "messagingSenderId": "58754126077"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
