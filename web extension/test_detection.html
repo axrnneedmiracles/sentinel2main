@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScamShield Logic Verification</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        .pass {
+            color: green;
+            font-weight: bold;
+        }
+
+        .fail {
+            color: red;
+            font-weight: bold;
+        }
+
+        .test-case {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>ScamShield Detection Logic Test</h1>
+    <div id="results">Running tests...</div>
+
+    <!-- Load the detector logic -->
+    <script src="detector.js"></script>
+
+    <script>
+        const tests = [
+            {
+                name: "Safe Link (Google Form)",
+                text: "Please fill out this form: https://forms.gle/xyz",
+                expectScam: false,
+                expectedScoreRange: [0, 3]
+            },
+            {
+                name: "True Scam (Urgent + Prize + .tk)",
+                text: "Urgent! Claim prize now: http://suspicious-site.tk",
+                expectScam: true,
+                expectedScoreRange: [4, 20]
+            },
+            {
+                name: "Low Risk Unknown Link (Should be Safe)",
+                text: "Check this out: http://unknown-site.com",
+                expectScam: false,
+                expectedScoreRange: [0, 3] // Link score 2
+            },
+            {
+                name: "Mixed Safe (Urgent + Safe Link)",
+                text: "Urgent! Fill this form: https://forms.gle/xyz",
+                expectScam: false,
+                expectedScoreRange: [0, 3] // Urgent(2) + Link(0) = 2
+            },
+            {
+                name: "Mixed Scam (Bank + Unknown Link)",
+                text: "Update Bank Account: http://bit.ly/scam",
+                expectScam: true,
+                expectedScoreRange: [4, 20] // Bank(5) + Link(2) = 7
+            },
+            {
+                name: "Random Text (Should be Safe)",
+                text: "Hey, are you coming for dinner tonight?",
+                expectScam: false,
+                expectedScoreRange: [0, 0]
+            }
+        ];
+
+        function runTests() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            let passed = 0;
+
+            tests.forEach(test => {
+                const score = window.ScamDetector.analyze(test.text);
+                const isScam = window.ScamDetector.isScam(test.text);
+
+                const scorePass = score >= test.expectedScoreRange[0] && score <= test.expectedScoreRange[1];
+                const verdictPass = isScam === test.expectScam;
+                const isPass = scorePass && verdictPass;
+
+                if (isPass) passed++;
+
+                const el = document.createElement('div');
+                el.className = 'test-case';
+                el.innerHTML = `
+                    <h3>${test.name} - <span class="${isPass ? 'pass' : 'fail'}">${isPass ? 'PASS' : 'FAIL'}</span></h3>
+                    <p>Text: "<em>${test.text}</em>"</p>
+                    <p>Score: <strong>${score}</strong> (Expected: ${test.expectedScoreRange[0]}-${test.expectedScoreRange[1]})</p>
+                    <p>Verdict: <strong>${isScam ? 'SCAM' : 'SAFE'}</strong> (Expected: ${test.expectScam ? 'SCAM' : 'SAFE'})</p>
+                `;
+                resultsDiv.appendChild(el);
+            });
+
+            const summary = document.createElement('h2');
+            summary.innerText = `Summary: ${passed}/${tests.length} Tests Passed`;
+            resultsDiv.prepend(summary);
+        }
+
+        // Wait for script to load
+        setTimeout(runTests, 500);
+    </script>
+</body>
+
+</html>

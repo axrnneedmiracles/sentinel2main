@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "ScamShield",
+  "version": "1.0",
+  "description": "Real-time scam detection for WhatsApp Web, Instagram, and other websites.",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ScamShield"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "detector.js",
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
